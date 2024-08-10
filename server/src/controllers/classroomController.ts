@@ -72,3 +72,52 @@ export const assignStudent = async (req: Request, res: Response) => {
     res.status(404).send({ message: "Error assigning student", error });
   }
 };
+
+export const getAllClassrooms = async (req: Request, res: Response) => {
+  try {
+    const classrooms = await Classroom.find();
+    res.json(classrooms);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching classrooms', error });
+  }
+};
+
+export const getClassroomById = async (req: Request, res: Response) => {
+  try {
+    const classroomId = req.params.id;
+    const classroom = await Classroom.findById(classroomId);
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+    res.json(classroom);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching classroom', error });
+  }
+};
+
+export const editClassroom = async (req: Request, res: Response) => {
+  try {
+    const classroomId = req.params.id;
+    const updates = req.body;
+    const classroom = await Classroom.findByIdAndUpdate(classroomId, updates, { new: true });
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+    res.json(classroom);
+  } catch (error) {
+    res.status(500).json({ message: 'Error editing classroom', error });
+  }
+};
+
+export const deleteClassroom = async (req: Request, res: Response) => {
+  try {
+    const classroomId = req.params.id;
+    const classroom = await Classroom.findByIdAndDelete(classroomId);
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+    res.json({ message: 'Classroom deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting classroom', error });
+  }
+};

@@ -39,3 +39,30 @@ export const createTimetable = async (req: Request, res: Response) => {
     res.status(400).json({ message: 'Error creating timetable', error });
   }
 };
+
+export const getTimetableForClassroom = async (req: Request, res: Response) => {
+  try {
+    const classroomId = req.params.id;
+    const timetable = await Timetable.findOne({ classroom: classroomId });
+    if (!timetable) {
+      return res.status(404).json({ message: 'Timetable not found for this classroom' });
+    }
+    res.json(timetable);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching timetable', error });
+  }
+};
+
+export const editTimetable = async (req: Request, res: Response) => {
+  try {
+    const classroomId = req.params.id;
+    const updates = req.body;
+    const timetable = await Timetable.findOneAndUpdate({ classroom: classroomId }, updates, { new: true });
+    if (!timetable) {
+      return res.status(404).json({ message: 'Timetable not found for this classroom' });
+    }
+    res.json(timetable);
+  } catch (error) {
+    res.status(500).json({ message: 'Error editing timetable', error });
+  }
+};

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import { AuthRequest } from "../middleware/auth";
+import Classroom from "../models/classroom";
 
 export const createTeacher = async (req: AuthRequest, res: Response) => {
   try {
@@ -117,5 +118,102 @@ export const logout = async (req: Request, res: Response) => {
     res.status(200).send({ message: "logged out" });
   } catch (error) {
     res.status(500).send(error);
+  }
+};
+
+export const getAllTeachers = async (req: Request, res: Response) => {
+  try {
+    const teachers = await User.find({ role: 'teacher' });
+    res.status(200).json(teachers);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving teachers', error });
+  }
+};
+
+export const getAllStudents = async (req: Request, res: Response) => {
+  try {
+    const students = await User.find({ role: 'student' });
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving students', error });
+  }
+};
+
+export const getStudentsForClassroom = async (req: Request, res: Response) => {
+  try {
+    const classroom = await Classroom.findById(req.params.id).populate('students');
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+    res.status(200).json(classroom.students);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving students', error });
+  }
+};
+
+export const getClassroomForStudent = async (req: AuthRequest, res: Response) => {
+  try {
+    const studentId = req.user._id;
+    const classroom = await Classroom.findOne({ students: studentId });
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found for student' });
+    }
+    res.status(200).json(classroom);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving classroom for student', error });
+  }
+}
+
+export const editTeacher = async (req: Request, res: Response) => {
+  try {
+    const teacherId = req.params.id;
+    const updates = req.body;
+    const teacher = await User.findByIdAndUpdate(teacherId, updates, { new: true });
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+    res.json(teacher);
+  } catch (error) {
+    res.status(500).json({ message: 'Error editing teacher', error });
+  }
+};
+
+export const editStudent = async (req: Request, res: Response) => {
+  try {
+    const studentId = req.params.id;
+    const updates = req.body;
+    const student = await User.findByIdAndUpdate(studentId, updates, { new: true });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.json(student);
+  } catch (error) {
+    res.status(500).json({ message: 'Error editing student', error });
+  }
+};
+
+export const deleteTeacher = async (req: Request, res: Response) => {
+  try {
+    const teacherId = req.params.id;
+    const teacher = await User.findByIdAndDelete(teacherId);
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+    res.json({ message: 'Teacher deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting teacher', error });
+  }
+};
+
+export const deleteStudent = async (req: Request, res: Response) => {
+  try {
+    const studentId = req.params.id;
+    const student = await User.findByIdAndDelete(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.json({ message: 'Student deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting student', error });
   }
 };
