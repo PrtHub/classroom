@@ -17,7 +17,7 @@ const initializeDB = async () => {
     if (!existingPrinciple) {
       const hashedPassword = await bcrypt.hash("Admin", 10);
       const principal = new User({
-        name: "Principal",
+        fullName: "Principal",
         email: "principal@classroom.com",
         password: hashedPassword,
         role: "principal",

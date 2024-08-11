@@ -1,13 +1,12 @@
 import express from 'express'
 import { auth, authorizeRole } from '../middleware/auth';
-import {createStudent, createTeacher, deleteStudent, deleteTeacher, editStudent, editTeacher, getAllStudents, getAllTeachers, getClassroomForStudent, getStudentsForClassroom, login, logout } from '../controllers/userController';
+import { deleteStudent, deleteTeacher, editStudent, editTeacher, getAllStudents, getAllTeachers, getClassroomForStudent, getStudentsForClassroom, login, logout, registerUser } from '../controllers/userController';
 
 const router = express.Router()
 
 router.post('/login', login),
 router.post('/logout', logout),
-router.post('/register-teacher', auth, authorizeRole(['principal']), createTeacher)
-router.post('/register-student', auth, authorizeRole(['principal', 'teacher']), createStudent)
+router.post('/register', auth, registerUser);
 router.get('/teachers', auth, authorizeRole(['principal']), getAllTeachers);
 router.get('/students', auth, authorizeRole(['principal']), getAllStudents);
 router.get('/classroom/:id/students', auth, authorizeRole(['teacher']), getStudentsForClassroom);

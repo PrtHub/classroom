@@ -5,63 +5,32 @@ import User from "../models/user";
 import { AuthRequest } from "../middleware/auth";
 import Classroom from "../models/classroom";
 
-export const createTeacher = async (req: AuthRequest, res: Response) => {
+export const registerUser = async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user.role !== "principal") {
-      return res
-        .status(403)
-        .send({ error: "Only principals can create teacher accounts" });
+    const {fullName, email, password, role } = req.body;
+
+    if (role === 'teacher' && req.user?.role !== 'principal') {
+      return res.status(403).send({ error: "Only principals can create teacher accounts" });
+    }
+    if (role === 'student' && !['principal', 'teacher'].includes(req.user?.role || '')) {
+      return res.status(403).send({ error: "Only principals and teachers can create student accounts" });
     }
 
-    const { email, password } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const existingTeacher = await User.findOne({ email });
-
-    if (existingTeacher) {
-      return res.status(400).send({ error: "Teacher already exists" });
-    }
-
-    const teacher = new User({
-      email,
-      password: hashedPassword,
-      role: "teacher",
-    });
-
-    await teacher.save();
-    res.status(201).send(teacher);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
-
-export const createStudent = async (req: AuthRequest, res: Response) => {
-  try {
-    if (req.user.role !== "principal" && req.user.role !== "teacher") {
-      return res.status(403).send({
-        error: "Only principals and teachers can create student accounts",
-      });
-    }
-
-    const { email, password } = req.body;
-
-    const existingStudent = await User.findOne({ email });
-
-    if (existingStudent) {
-      return res.status(400).send({ error: "Student already exists" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).send({ error: `User with role ${role} already exists` });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const student = new User({
+    const newUser = new User({
+      fullName,
       email,
       password: hashedPassword,
-      role: "student",
+      role,
     });
 
-    await student.save();
-    res.status(201).send(student);
+    await newUser.save();
+    res.status(201).send(newUser);
   } catch (error) {
     res.status(400).send(error);
   }
