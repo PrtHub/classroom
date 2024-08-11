@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../store/store";
 import { logout } from "../store/userSlice";
-import { Plus } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -40,7 +39,7 @@ const Navbar = () => {
               {currentUser?.fullName}
             </span>
           )}
-          {currentUser?.role !== "principal" ? (
+          {currentUser && (
             <button
               type="button"
               onClick={handleLogout}
@@ -48,13 +47,6 @@ const Navbar = () => {
             >
               Log out
             </button>
-          ) : (
-            <Link
-              to="/register"
-              className="bg-green-1 rounded-md px-5 py-2 text-white font-semibold w-full flex items-center gap-1"
-            >
-              <Plus size={15} /> New Member
-            </Link>
           )}
         </section>
       </section>

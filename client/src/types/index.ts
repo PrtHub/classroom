@@ -1,6 +1,6 @@
 export interface User {
     _id: string;
-    fullname: string;
+    fullName: string;
     email: string;
     role: 'principal' | 'teacher' | 'student';
     refreshToken: string
