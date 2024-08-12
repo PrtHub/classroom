@@ -5,7 +5,7 @@ const Sidebar = () => {
   const { pathname } = useLocation();
 
   return (
-    <section className="w-fit bg-dark-4 h-screen hidden sm:flex flex-col justify-between pt-40 px-5 xl:px-10 fixed top-0 left-0 z-20 overflow-y-scroll">
+    <section className="w-fit bg-dark-4 h-screen hidden sm:flex flex-col justify-between pt-40 px-5 xl:px-10 fixed top-0 left-0 z-20">
       <section className="w-full flex flex-col gap-4">
         <Link
           to="/"
