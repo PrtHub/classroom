@@ -84,7 +84,7 @@ const PrincipalView = () => {
 
   useEffect(() => {
     fetchClassroomsDetails()
-  }, [classroomsDetails])
+  }, [classrooms])
 
   const fetchTeachers = async (): Promise<void> => {
     try {
