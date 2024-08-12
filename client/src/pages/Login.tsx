@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useDispatch } from "react-redux";
 import { login } from "../store/userSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -15,13 +17,17 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setLoading(true)
       const response = await api.post("/user/login", { email, password });
       localStorage.setItem("token", response.data.accesstoken);
+      toast.success("Logged in!");
       navigate("/");
       dispatch(login(response.data.user));
     } catch (error) {
       setError("Login failed. Please try again.");
       console.log(error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -53,9 +59,10 @@ const Login = () => {
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="w-full p-2 bg-green-1 text-white font-medium transition rounded hover:bg-green-1/80"
           >
-            Log in
+           {loading ? "Loading...": "Log in"}
           </button>
           <span className="flex gap-2 items-center text-gray-1 mt-2 text-sm">
             Don't have an account?{" "}

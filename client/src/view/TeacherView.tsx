@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { User } from "../types";
 import api from "../services/api";
 import Dialog from "../components/Dialog";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
 import { convertTo12Hour } from "../utils/format";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 interface Student {
   _id: string;
@@ -47,8 +47,6 @@ const TeacherView: React.FC = () => {
   const [timetable, setTimetable] = useState<TimetableData | null>(null);
   const [newSubject, setNewSubject] = useState<Subject>({ name: "", day: "", startTime: "", endTime: "" });
 
-  const user = useSelector((state: RootState) => state.user)
-
   useEffect(() => {
     fetchTeacherClassroom()
   }, []);
@@ -58,12 +56,6 @@ const TeacherView: React.FC = () => {
       fetchTimetable(classroom._id);
     }
   }, [classroom]);
-
-  console.log(user)
-
-  console.log(classroom)
-
-  console.log(students)
 
   const fetchTeacherClassroom = async (): Promise<void> => {
     try {
@@ -94,6 +86,7 @@ const TeacherView: React.FC = () => {
       await api.patch(`/user/students/${id}`, data);
       fetchTeacherClassroom();
       setIsEditDialogOpen(false);
+      toast.success("Student updated!");
     } catch (error) {
       console.error("Error editing user:", error);
     }
@@ -103,6 +96,7 @@ const TeacherView: React.FC = () => {
     try {
       await api.delete(`/user/students/${id}`);
       fetchTeacherClassroom();
+      toast.success("Student deleted!");
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -117,8 +111,15 @@ const TeacherView: React.FC = () => {
       setTimetable(response.data);
       setIsTimetableDialogOpen(false);
       setNewSubject({ name: "", day: "", startTime: "", endTime: "" });
-    } catch (error) {
-      console.error("Error creating timetable:", error);
+      toast.success("Timetable created!");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error creating timetable:", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        console.error("Unexpected error:", error);
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 

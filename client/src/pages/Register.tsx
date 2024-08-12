@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -14,6 +15,7 @@ const Register = () => {
     e.preventDefault();
     try {
       await api.post("/user/register", { fullName, email, password, role });
+      toast.success("Registered successfully!");
       navigate("/");
     } catch (error) {
       setError("You don't have the access to register!")

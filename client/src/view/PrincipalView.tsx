@@ -1,9 +1,11 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { Classroom, User } from "../types";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Dialog from "../components/Dialog";
+import toast from "react-hot-toast";
 
 interface Teacher extends User {
   _id: string;
@@ -78,8 +80,11 @@ const PrincipalView = () => {
     fetchTeachers();
     fetchStudents();
     fetchClassrooms();
-    fetchClassroomsDetails()
   }, []);
+
+  useEffect(() => {
+    fetchClassroomsDetails()
+  }, [classroomsDetails])
 
   const fetchTeachers = async (): Promise<void> => {
     try {
@@ -126,9 +131,11 @@ const PrincipalView = () => {
       if (role === "teacher") {
         await api.patch(`/user/teachers/${id}`, data);
         fetchTeachers();
+        toast.success("Teacher updated!");
       } else if (role === "student") {
         await api.patch(`/user/students/${id}`, data);
         fetchStudents();
+        toast.success("Student updated!");
       }
       setIsEditDialogOpen(false);
     } catch (error) {
@@ -144,9 +151,11 @@ const PrincipalView = () => {
       if (role === "teacher") {
         await api.delete(`/user/teachers/${id}`);
         fetchTeachers();
+        toast.success("Teacher deleted!");
       } else if (role === "student") {
         await api.delete(`/user/students/${id}`);
         fetchStudents();
+        toast.success("Student deleted!");
       }
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -158,6 +167,7 @@ const PrincipalView = () => {
       await api.post("/classroom/create", data);
       fetchClassrooms();
       setIsCreateClassroomDialogOpen(false);
+      toast.success("Classroom created!");
     } catch (error) {
       console.error("Error creating classroom:", error);
     }
@@ -184,8 +194,15 @@ const PrincipalView = () => {
       fetchTeachers();
       fetchClassrooms();
       setIsAssignTeacherDialogOpen(false);
-    } catch (error) {
-      console.error("Error assigning teacher:", error);
+      toast.success("Teacher assigned!");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error assigning teacher:", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        console.error("Unexpected error:", error);
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -198,8 +215,15 @@ const PrincipalView = () => {
       fetchStudents();
       fetchClassrooms();
       setIsAssignStudentDialogOpen(false);
-    } catch (error) {
-      console.error("Error assigning teacher:", error);
+      toast.success("Student assigned!");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error assigning student:", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        console.error("Unexpected error:", error);
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 

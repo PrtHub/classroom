@@ -63,11 +63,11 @@ export const assignStudent = async (req: Request, res: Response) => {
         .send({ message: "Classroom or student not found" });
     }
 
-    const existingStudent = await Classroom.findOne({ teacher: studentId });
+    const existingStudent = await Classroom.findOne({ students: studentId });
     if (existingStudent) {
       return res
         .status(400)
-        .send({ message: "Teacher already assigned to classroom" });
+        .send({ message: "Student already assigned to classroom" });
     }
 
     if (!classroom.students.includes(studentId)) {

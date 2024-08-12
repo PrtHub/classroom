@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../store/store";
 import { logout } from "../store/userSlice";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Navbar = () => {
     e.preventDefault();
     try {
       localStorage.removeItem("token");
+      toast.success("Logged out!");
       navigate("/login");
       dispatch(logout());
     } catch (error) {
