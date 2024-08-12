@@ -41,6 +41,8 @@ const PrincipalView = () => {
     useState<boolean>(false);
   const [isAssignTeacherDialogOpen, setIsAssignTeacherDialogOpen] =
     useState<boolean>(false);
+  const [isAssignStudentDialogOpen, setIsAssignStudentDialogOpen] =
+    useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [currentClassroom, setCurrentClassroom] = useState<Classroom | null>(
     null
@@ -157,6 +159,20 @@ const PrincipalView = () => {
       fetchTeachers();
       fetchClassrooms();
       setIsAssignTeacherDialogOpen(false);
+    } catch (error) {
+      console.error("Error assigning teacher:", error);
+    }
+  };
+
+  const handleAssignStudent = async (
+    studentId: string,
+    classroomId: string
+  ): Promise<void> => {
+    try {
+      await api.post("/classroom/assign-student", { studentId, classroomId });
+      fetchStudents();
+      fetchClassrooms();
+      setIsAssignStudentDialogOpen(false);
     } catch (error) {
       console.error("Error assigning teacher:", error);
     }
@@ -291,6 +307,15 @@ const PrincipalView = () => {
                 className="ml-2 text-green-1 font-medium"
               >
                 Assign Teacher
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentClassroom(classroom);
+                  setIsAssignStudentDialogOpen(true);
+                }}
+                className="ml-2 text-green-1 font-medium"
+              >
+                Assign Student
               </button>
             </li>
           ))}
@@ -431,6 +456,46 @@ const PrincipalView = () => {
             {teachers.map((teacher) => (
               <option key={teacher._id} value={teacher._id}>
                 {teacher.fullName}
+              </option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            className="bg-green-1 text-white px-4 py-2 rounded"
+          >
+            Assign
+          </button>
+        </form>
+      </Dialog>
+      
+      <Dialog
+        isOpen={isAssignStudentDialogOpen}
+        onClose={() => setIsAssignStudentDialogOpen(false)}
+      >
+        <h2 className="text-xl font-semibold mb-4 text-white">
+          Assign Student to {currentClassroom?.name}
+        </h2>
+        <form
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            if (currentClassroom) {
+              handleAssignStudent(
+                formData.get("studentId") as string,
+                currentClassroom._id
+              );
+            }
+          }}
+        >
+          <select
+            name="studentId"
+            required
+            className="w-full p-2 mb-4 border rounded"
+          >
+            <option value="">Select a student</option>
+            {students.map((student) => (
+              <option key={student._id} value={student._id}>
+                {student.fullName}
               </option>
             ))}
           </select>

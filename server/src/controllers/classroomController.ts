@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Classroom from "../models/classroom";
 import User from "../models/user";
+import { AuthRequest } from "../middleware/auth";
 
 export const createClassroom = async (req: Request, res: Response) => {
   try {
@@ -62,6 +63,13 @@ export const assignStudent = async (req: Request, res: Response) => {
         .send({ message: "Classroom or student not found" });
     }
 
+    const existingStudent = await Classroom.findOne({ teacher: studentId });
+    if (existingStudent) {
+      return res
+        .status(400)
+        .send({ message: "Teacher already assigned to classroom" });
+    }
+
     if (!classroom.students.includes(studentId)) {
       classroom.students.push(studentId);
       await classroom.save();
@@ -119,5 +127,22 @@ export const deleteClassroom = async (req: Request, res: Response) => {
     res.json({ message: 'Classroom deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting classroom', error });
+  }
+};
+
+export const getTeacherClassrooms = async (req: AuthRequest, res: Response) => {
+  try {
+    const teacherId = req.user._id;
+    const classrooms = await Classroom.find({ teacher: teacherId })
+      .populate('students', 'fullName email')
+      .populate('teacher', 'fullName email');
+    
+    if (!classrooms.length) {
+      return res.status(404).json({ message: 'No classrooms assigned to this teacher' });
+    }
+    
+    res.status(200).json(classrooms);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching teacher classrooms', error });
   }
 };

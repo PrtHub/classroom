@@ -186,3 +186,33 @@ export const deleteStudent = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error deleting student', error });
   }
 };
+
+export const getAllStudentsWithClassrooms = async (req: Request, res: Response) => {
+  try {
+    const studentsWithClassrooms = await User.aggregate([
+      { $match: { role: 'student' } },
+      {
+        $lookup: {
+          from: 'classrooms',
+          localField: '_id',
+          foreignField: 'students',
+          as: 'classroom'
+        }
+      },
+      { $unwind: '$classroom' },
+      {
+        $project: {
+          _id: 1,
+          fullName: 1,
+          email: 1,
+          'classroom._id': 1,
+          'classroom.name': 1
+        }
+      }
+    ]);
+
+    res.status(200).json(studentsWithClassrooms);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching students with classrooms', error });
+  }
+};
