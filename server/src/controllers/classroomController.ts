@@ -163,3 +163,16 @@ export const getStudentClassroom = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Error fetching student classroom', error });
   }
 };
+
+
+export const getClassroomsDetails = async (req: AuthRequest, res: Response) => {
+  try {
+    const classrooms = await Classroom.find()
+      .populate('teacher', 'fullName')
+      .populate('students', 'fullName');
+    
+    res.status(200).json(classrooms);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching classrooms details', error }) ;
+  }
+};

@@ -32,6 +32,20 @@ interface ClassroomData {
   schedule: ScheduleItem[];
 }
 
+interface IClassroom {
+  _id: string;
+  name: string;
+  teacher: {
+    _id: string;
+    fullName: string;
+  } | null;
+  students: {
+    _id: string;
+    fullName: string;
+  }[];
+  schedule: ScheduleItem[];
+}
+
 const PrincipalView = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -58,11 +72,13 @@ const PrincipalView = () => {
       { day: "Saturday", startTime: "", endTime: "" },
     ],
   });
+  const [classroomsDetails, setClassroomsDetails] = useState<IClassroom[]>([]);
 
   useEffect(() => {
     fetchTeachers();
     fetchStudents();
     fetchClassrooms();
+    fetchClassroomsDetails()
   }, []);
 
   const fetchTeachers = async (): Promise<void> => {
@@ -89,6 +105,15 @@ const PrincipalView = () => {
       setClassrooms(response.data);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
+    }
+  };
+
+  const fetchClassroomsDetails = async (): Promise<void> => {
+    try {
+      const response = await api.get<IClassroom[]>("/classroom/details");
+      setClassroomsDetails(response.data);
+    } catch (error) {
+      console.error("Error fetching classrooms details:", error);
     }
   };
 
@@ -205,7 +230,7 @@ const PrincipalView = () => {
           <tbody className="">
             {teachers.map((teacher) => (
               <tr key={teacher._id} className="text-gray-1">
-                <td className="border border-gray-300 p-2 text-center">
+                <td className="border border-gray-300 p-2 text-center capitalize">
                   {teacher.fullName}
                 </td>
                 <td className="border border-gray-300 p-2 text-center">
@@ -255,7 +280,7 @@ const PrincipalView = () => {
           <tbody>
             {students.map((student) => (
               <tr key={student._id} className="text-gray-1">
-                <td className="border border-gray-300 p-2 text-center">
+                <td className="border border-gray-300 p-2 text-center capitalize">
                   {student.fullName}
                 </td>
                 <td className="border border-gray-300 p-2 text-center">
@@ -320,6 +345,34 @@ const PrincipalView = () => {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mb-10 w-full flex flex-col gap-2">
+        <h3 className="text-xl font-medium mb-2 text-white">Classrooms Detatils</h3>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="text-white">
+              <th className="border border-gray-300 p-2">Classroom</th>
+              <th className="border border-gray-300 p-2">Teacher</th>
+              <th className="border border-gray-300 p-2">Students</th>
+            </tr>
+          </thead>
+          <tbody>
+            {classroomsDetails.map((classroom) => (
+              <tr key={classroom._id} className="text-gray-1">
+                <td className="border border-gray-300 p-2 text-center">{classroom.name}</td>
+                <td className="border border-gray-300 p-2 text-center capitalize">
+                  {classroom.teacher ? classroom.teacher.fullName : 'Not assigned'}
+                </td>
+                <td className="border border-gray-300 p-2 text-center capitalize">
+                  {classroom.students.length > 0
+                    ? classroom.students.map(student => student.fullName).join(', ')
+                    : 'No students assigned'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
 
       {/* edit user dialog */}
