@@ -214,7 +214,7 @@ const PrincipalView = () => {
           <h3 className="text-xl font-medium mb-2 text-white">Teachers</h3>
           <Link
             to="/register"
-            className="bg-green-1 rounded-md px-3 py-2 text-white font-semibold flex items-center gap-1"
+            className="bg-green-1 rounded-md px-3 py-2 text-white text-sm sm:text-base font-semibold flex items-center gap-1"
           >
             <Plus size={15} /> New Teacher
           </Link>
@@ -264,7 +264,7 @@ const PrincipalView = () => {
           <h3 className="text-xl font-medium mb-2 text-white">Students</h3>
           <Link
             to="/register"
-            className="bg-green-1 rounded-md px-3 py-2 text-white font-semibold flex items-center gap-1"
+            className="bg-green-1 rounded-md px-3 py-2 text-white text-sm sm:text-base font-semibold flex items-center gap-1"
           >
             <Plus size={15} /> New Student
           </Link>
@@ -314,7 +314,7 @@ const PrincipalView = () => {
           <h3 className="text-xl font-medium mb-2 text-white">Classrooms</h3>
           <button
             onClick={() => setIsCreateClassroomDialogOpen(true)}
-            className="bg-green-1 text-white px-4 py-2 rounded mb-4 font-semibold"
+            className="bg-green-1 text-white px-3 py-2 rounded mb-4 text-sm sm:text-base font-semibold"
           >
             Create Classroom
           </button>

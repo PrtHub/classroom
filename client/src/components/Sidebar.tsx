@@ -5,7 +5,7 @@ const Sidebar = () => {
   const { pathname } = useLocation();
 
   return (
-    <section className="w-full max-w-[250px] bg-dark-4 h-screen flex flex-col justify-between pt-40 px-10 fixed top-0 left-0 z-20 overflow-y-scroll">
+    <section className="w-fit bg-dark-4 h-screen hidden sm:flex flex-col justify-between pt-40 px-5 xl:px-10 fixed top-0 left-0 z-20 overflow-y-scroll">
       <section className="w-full flex flex-col gap-4">
         <Link
           to="/"
@@ -14,7 +14,7 @@ const Sidebar = () => {
           }`}
         >
           <LayoutDashboard />
-          <p>Dashboard</p>
+          <p className="hidden md:block">Dashboard</p>
         </Link>
       </section>
     </section>

@@ -20,22 +20,22 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full h-20 bg-dark-4 px-10 sticky top-0 z-40">
+    <nav className="w-full h-20 bg-dark-4 px-3 sm:px-5 md:px-10 sticky top-0 z-40">
       <section className="flex flex-1 justify-between items-center h-full">
-        <Link to="/" className="text-3xl font-bold text-white">
+        <Link to="/" className="text-2xl sm:text-3xl font-bold text-white">
           Clasroom
         </Link>
-        <section className="flex items-center gap-5">
+        <section className="flex items-center gap-2 sm:gap-5">
           {!currentUser ? (
             <Link
               to="/login"
-              className="bg-green-1 rounded-md px-5 py-2 text-white font-semibold"
+             className="bg-green-1 rounded-md px-3 py-2 text-white text-sm sm:text-base font-semibold w-full"
             >
               Log in
             </Link>
           ) : (
-            <span className="text-xl font-semibold text-white capitalize flex items-end gap-1">
-              <p className="text-base text-gray-1 not-italic">Hello,</p>{" "}
+            <span className="text-base sm:text-xl font-semibold text-white capitalize flex flex-col sm:flex-row items-start sm:items-end sm:gap-1">
+              <p className="text-sm sm:text-base text-gray-1 not-italic">Hello,</p>{" "}
               {currentUser?.fullName}
             </span>
           )}
@@ -43,7 +43,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="bg-green-1 rounded-md px-5 py-2 text-white font-semibold w-full"
+              className="bg-green-1 rounded-md px-3 py-2 text-white text-sm sm:text-base font-semibold w-full"
             >
               Log out
             </button>
