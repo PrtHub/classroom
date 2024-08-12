@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema, Types } from "mongoose";
 
 export interface IUser {
   _id: string;
@@ -30,4 +30,17 @@ export interface ITimetable {
     startTime: string;
     endTime: string;
   }[];
+}
+
+
+interface Subject {
+  name: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface CreateTimetableRequestBody {
+  classroomId: Types.ObjectId;
+  subjects: Subject[];
 }
