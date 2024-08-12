@@ -1,6 +1,6 @@
 import express from 'express'
 import { auth, authorizeRole } from '../middleware/auth';
-import { assignStudent, assignTeacher, createClassroom, deleteClassroom, editClassroom, getAllClassrooms, getClassroomById, getTeacherClassrooms } from '../controllers/classroomController';
+import { assignStudent, assignTeacher, createClassroom, deleteClassroom, editClassroom, getAllClassrooms, getClassroomById, getStudentClassroom, getTeacherClassrooms } from '../controllers/classroomController';
 
 const router = express.Router()
 
@@ -12,5 +12,6 @@ router.get('/:id', auth, authorizeRole(['principal', 'teacher']), getClassroomBy
 router.patch('/:id', auth, authorizeRole(['principal']), editClassroom);
 router.delete('/:id', auth, authorizeRole(['principal']), deleteClassroom);
 router.get('/teacher/classrooms', auth, authorizeRole(['teacher']), getTeacherClassrooms);
+router.get('/students/classroom', auth, authorizeRole(['student']), getStudentClassroom)
 
 export default router

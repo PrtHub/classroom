@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Timetable from '../models/timetable';
 import Classroom from '../models/classroom';
+import { AuthRequest } from '../middleware/auth';
 
 export const createTimetable = async (req: Request, res: Response) => {
   try {
@@ -64,5 +65,26 @@ export const editTimetable = async (req: Request, res: Response) => {
     res.json(timetable);
   } catch (error) {
     res.status(500).json({ message: 'Error editing timetable', error });
+  }
+};
+
+export const getStudentTimetable = async (req: AuthRequest, res: Response) => {
+  try {
+    const studentId = req.user._id;
+    const classroom = await Classroom.findOne({ students: studentId });
+
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found for this student' });
+    }
+
+    const timetable = await Timetable.findOne({ classroom: classroom._id });
+
+    if (!timetable) {
+      return res.status(404).json({ message: 'Timetable not found for this classroom' });
+    }
+
+    res.status(200).json(timetable);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching student timetable', error });
   }
 };

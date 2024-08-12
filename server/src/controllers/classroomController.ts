@@ -146,3 +146,20 @@ export const getTeacherClassrooms = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Error fetching teacher classrooms', error });
   }
 };
+
+export const getStudentClassroom = async (req: AuthRequest, res: Response) => {
+  try {
+    const studentId = req.user._id;
+    const classroom = await Classroom.find({ students: studentId })
+      .populate('students', 'fullName email')
+      .populate('teacher', 'fullName email');
+
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found for this student' });
+    }
+
+    res.status(200).json(classroom);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching student classroom', error });
+  }
+};
